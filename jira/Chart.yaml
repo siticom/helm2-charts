@@ -1,5 +1,7 @@
 apiVersion: v1
 appVersion: "7"
-description: A Helm chart for Kubernetes
+description: Jira helm chart
 name: jira
 version: 0.1.0
+icon: https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/184_Jira_logo_logos-512.png
+home: https://www.atlassian.com/de/software/jira
