@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: "latest"
+description: Heimdall application dashboard helm chart
+name: heimdall
+version: 0.1.0
+icon: https://github.com/linuxserver/Heimdall/raw/master/public/img/heimdall-icon-small.png
+home: https://heimdall.site/
