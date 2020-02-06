@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "traefik.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "traefik.name" . }}
+    helm.sh/chart: {{ include "traefik.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "traefik.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: {{ include "traefik.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ include "traefik.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true
+          ports:
+            - name: admin
+              containerPort: 8080
+              protocol: TCP
+{{- range .Values.hostPorts }}
+            - containerPort: {{ . }}
+              hostPort: {{ . }}
+{{- end }}
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: admin
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: admin
+          volumeMounts:
+            - name: config
+              mountPath: /etc/traefik
+              readOnly: true
+{{- if .Values.tlsSecret }}
+            - name: tls
+              mountPath: /etc/tls
+              readOnly: true
+{{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "traefik.fullname" . }}-config
+{{- if .Values.tlsSecret }}
+        - name: tls
+          secret:
+            secretName: {{ .Values.tlsSecret }}
+{{- end }}

@@ -1,0 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "traefik.fullname" . }}-config
+data:
+{{- if .Values.traefikConfig }}
+  traefik.yml: |
+{{ .Values.traefikConfig | toYaml | indent 4}}
+{{- else }}
+  traefik.yml: |
+    api:
+      dashboard: true
+    accessLog: {}
+    entrypoints:
+      web:
+        address: ":80"
+    providers:
+      kubernetesCRD: {}
+{{- end }}
+{{- if .Values.traefikFileConfig }}
+  file.yml: |
+{{ .Values.traefikFileConfig | toYaml | indent 4}}
+{{- end }}

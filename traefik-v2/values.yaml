@@ -1,0 +1,65 @@
+# Default values for traefik.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: traefik
+  tag: v2.0
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  # disable ingress for the initial deployment, 
+  # to create the specific kubernetes resource definitions first
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: traefik
+  host: traefik.example.com
+  entryPoints: []
+  tlsSecret: ""
+  middlewars: []
+
+resources:
+  limits:
+   cpu: 500m
+   memory: 1024Mi
+  requests:
+   cpu: 200m
+   memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+  # - key: node-role.kubernetes.io/master
+  #   effect: NoSchedule
+
+affinity: {}
+
+rbac: false
+
+# mounting an existing secret with certificates
+tlsSecret: ""
+
+# traefik config
+traefikConfig: ""
+
+# file provider config
+traefikFileConfig: ""
+
+# dashboard users (default: admin/admin)
+adminUsers: |
+  admin:$apr1$0JraPlEm$RBu/tu1ZbE0AFuD1DkSm0/
+
+# host ports of the daemon set
+hostPorts:
+  - 80
+  - 443

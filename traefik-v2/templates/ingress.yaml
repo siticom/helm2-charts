@@ -1,0 +1,53 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "traefik.fullname" . }}-dashboard-admin
+  labels:
+{{ include "traefik.labels" . | indent 4 }}
+data:
+  users: {{ .Values.adminUsers | b64enc }}
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "traefik.fullname" . }}-dashboard-auth
+  labels:
+{{ include "traefik.labels" . | indent 4 }}
+spec:
+  basicAuth:
+    secret: {{ include "traefik.fullname" . }}-dashboard-admin
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "traefik.fullname" . }}
+  labels:
+{{ include "traefik.labels" . | indent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.entryPoints }}
+  entryPoints:
+{{- toYaml . | nindent 4 }}
+{{- end }}
+  routes:
+  - match: Host(`{{ .Values.ingress.host }}`)
+    kind: Rule
+    services:
+    - name: {{ include "traefik.fullname" . }}
+      port: {{ .Values.service.port }}
+    middlewares:
+{{- range .Values.ingress.middlewares }}
+    - name: {{ . }}
+{{- end }}
+    - name: {{ include "traefik.fullname" . }}-dashboard-auth
+{{- if .Values.ingress.tlsSecret }}
+  tls:
+    secretName: {{ .Values.ingress.tlsSecret }}
+{{- end }}
+{{- end -}}
