@@ -3,16 +3,18 @@ kind: Deployment
 metadata:
   name: {{ include "jira.fullname" . }}
   labels:
-    {{- include "jira.labels" . | nindent 4 }}
+{{ include "jira.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "jira.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ include "jira.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "jira.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ include "jira.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -28,7 +30,7 @@ spec:
             mountPath: /var/atlassian/jira
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: X_PROXY_NAME
