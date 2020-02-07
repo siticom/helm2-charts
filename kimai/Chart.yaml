@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: "master"
+description: Kimani time tracking helm chart
+name: kimai
+version: 0.1.0
+icon: https://github.com/kevinpapst/kimai2/raw/master/public/apple-touch-icon.png
+home: https://www.kimai.org
