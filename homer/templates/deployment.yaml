@@ -55,7 +55,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-volumes:
-  - name: "{{ .Release.Name }}-config"
-    configMap:
-      name: "{{ .Release.Name }}-configmap"
+      volumes:
+        - name: "{{ .Release.Name }}-config"
+          configMap:
+            name: "{{ .Release.Name }}-configmap"

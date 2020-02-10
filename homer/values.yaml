@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: registry.cloud.siticom.de/siticom-cloud/homer
   tag: latest
-  pullPolicy: always
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
