@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: "{{ .Release.Name }}-configmap"
 data:
-  config.yml: "{{ .Values.homerConfig }}"
+  config.yml: {{ toYaml .Values.homerConfig | indent 2 }}
