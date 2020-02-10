@@ -43,6 +43,7 @@ spec:
           volumeMounts:
             - name: "{{ .Release.Name }}-config"
               mountPath: /www/config.yml
+              subPath: config.yml
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
