@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: "latest"
+description: Homer dashboard helm chart
+name: homer
+version: 0.3.0
+icon: https://github.com/bastienwirtz/homer/raw/master/assets/logo.png
+home: https://github.com/bastienwirtz/homer
